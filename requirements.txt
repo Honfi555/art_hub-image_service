@@ -1,0 +1,4 @@
+python-dotenv~=1.0.1
+fastapi[all]~=0.115.11
+redis~=5.2.1
+starlette~=0.46.2
