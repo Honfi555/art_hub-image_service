@@ -1,9 +1,10 @@
 from logging import Logger
+from typing import List
 
 from .connect import connect_redis
 from .logger import configure_logs
 
-__all__ = ["select_article_images", "get_image_bytes"]
+__all__: List[str] = ["select_article_images", "get_image_bytes"]
 logger: Logger = configure_logs(__name__)
 redis_client = connect_redis()
 
@@ -15,7 +16,7 @@ ARTICLE_IMAGES_LIST = "article:{article_id}:images"
 IMAGE_BASE_URL = "/images/"
 
 
-def select_article_images(article_id: int, announce: bool = False) -> list[str]:
+def select_article_images(article_id: int, announce: bool = False) -> List[str]:
 	"""
 	Получить список image_id для статьи.
 	Если announce=True — вернуть только первый image_id, иначе все.

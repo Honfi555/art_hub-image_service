@@ -1,10 +1,11 @@
 """Файл для настройки логирования."""
-import os
-import sys
-import logging
 from logging.handlers import RotatingFileHandler
+from typing import List
+import logging
+import sys
+import os
 
-__all__: list[str] = ["configure_logs"]
+__all__: List[str] = ["configure_logs"]
 
 
 def create_intermediate_dirs(path: str) -> None:
