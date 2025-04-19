@@ -3,3 +3,4 @@ fastapi[all]~=0.115.11
 uvicorn~=0.34.1
 redis~=5.2.1
 starlette~=0.46.2
+pydantic~=2.11.3
