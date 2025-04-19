@@ -1,11 +1,21 @@
 from fastapi import FastAPI, HTTPException, Response, status, Query, Body, Header
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from .dependecies import verify_jwt
 from .models.articles import ImagesAdd
 from .database.images import select_article_images, get_image_bytes, insert_images, delete_images
 
 app = FastAPI()
+
+# Разрешить CORS для любых Origin, заголовков и методов
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],            # любые домены/IP
+    allow_credentials=True,
+    allow_methods=["*"],            # любые HTTP‑методы
+    allow_headers=["*"],            # любые заголовки
+)
 
 
 @app.delete("/remove_images")
