@@ -103,11 +103,11 @@ async def list_images(article_id: int, authorization: str = Header(...), announc
 		dict: Словарь с ключом 'image_urls', содержащий список URL изображений.
 
 	Исключения:
-		HTTPException: 404, если изображения не найдены.
+		HTTPException: 204, если изображения не найдены.
 	"""
 	ids = select_article_images(article_id, announce)
 	if not ids:
-		raise HTTPException(status_code=404, detail="Images not found")
+		raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Images not found")
 	# Возвращаем клиенту список URL
 	return {"image_urls": [
 		f"/image/{article_id}/{image_id}" for image_id in ids
@@ -129,9 +129,9 @@ async def fetch_image(article_id: int, image_id: str, authorization: str = Heade
 		Response: Изображение в формате JPEG.
 
 	Исключения:
-		HTTPException: 404, если изображение не найдено.
+		HTTPException: 204, если изображение не найдено.
 	"""
 	data = get_image_bytes(article_id, image_id)
 	if not data:
-		raise HTTPException(status_code=404, detail="Image not found")
+		raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Images not found")
 	return Response(content=data, media_type="image/jpeg")
