@@ -115,8 +115,7 @@ async def list_images(article_id: int, authorization: str = Header(...), announc
 
 
 @app.get("/image/{article_id}/{image_id}")
-@verify_jwt
-async def fetch_image(article_id: int, image_id: str, authorization: str = Header(...)):
+async def fetch_image(article_id: int, image_id: str):
 	"""
 	Получает изображение по идентификатору статьи и изображения.
 
