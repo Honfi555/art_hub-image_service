@@ -4,3 +4,4 @@ uvicorn~=0.34.1
 redis~=5.2.1
 starlette~=0.46.2
 pydantic~=2.11.3
+PYJWT~=2.10.1
