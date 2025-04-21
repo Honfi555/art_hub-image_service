@@ -1,0 +1,19 @@
+[Unit]
+Description=FastAPI Image Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/art_hub-image_service
+Environment="PATH=/opt/art_hub-image_service/venv/bin/
+ExecStart=/opt/art_hub-image_service/venv/bin/uvicorn app.image_server:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --workers 2
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
