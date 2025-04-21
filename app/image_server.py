@@ -2,19 +2,19 @@ from fastapi import FastAPI, HTTPException, Response, status, Query, Body, Heade
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from .dependecies import verify_jwt
+from .utils import verify_jwt, get_jwt_login
 from .models.articles import ImagesAdd
+from .database.utils import check_article_owner
 from .database.images import select_article_images, get_image_bytes, insert_images, delete_images
 
 app = FastAPI()
 
-# Разрешить CORS для любых Origin, заголовков и методов
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],            # любые домены/IP
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],            # любые HTTP‑методы
-    allow_headers=["*"],            # любые заголовки
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -40,7 +40,7 @@ async def remove_article_images(
 		HTTPException: 500, если происходит ошибка на сервере.
 	"""
 	try:
-		# delete_images теперь принимает article_id и список UUID строк
+		check_article_owner(article_id, get_jwt_login(authorization))
 		deleted = delete_images(article_id, image_ids)
 		return JSONResponse(
 			status_code=status.HTTP_200_OK,
@@ -75,7 +75,7 @@ async def add_article_images(
 		HTTPException: 500, если происходит ошибка на сервере.
 	"""
 	try:
-		# insert_images возвращает список сгенерированных UUID
+		check_article_owner(article_id, get_jwt_login(authorization))
 		created = insert_images(ImagesAdd(article_id=article_id, images=images))
 		return JSONResponse(
 			status_code=status.HTTP_201_CREATED,
