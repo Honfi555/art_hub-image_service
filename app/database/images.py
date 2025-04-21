@@ -14,13 +14,13 @@ logger: Logger = configure_logs(__name__)
 # Префиксы ключей в Redis
 IMAGE_KEY_PREFIX: str = "image:"
 ARTICLE_IMAGES_LIST: str = "article:{article_id}:images"
-IMAGE_KEY: str = "image:{image_id}"
+IMAGE_KEY: str = "image:{article_id}:{image_id}"
 
 # Базовый URL для отдачи изображений
 IMAGE_BASE_URL: str = "/images/"
 
 
-def insert_images(images_data: ImagesAdd) -> list[str]:
+def insert_images(images_data: ImagesAdd) -> List[str]:
 	"""
 	Вставляет изображения в Redis и сохраняет связь с соответствующей статьей.
 
@@ -35,7 +35,7 @@ def insert_images(images_data: ImagesAdd) -> list[str]:
 	"""
 	redis_client = connect_redis()
 	article_id = images_data.article_id
-	image_ids: list[str] = []
+	image_ids: List[str] = []
 	for b64 in images_data.images:
 		# Декодирование изображения из base64
 		img_bytes = base64.b64decode(b64)
@@ -52,7 +52,7 @@ def insert_images(images_data: ImagesAdd) -> list[str]:
 	return image_ids
 
 
-def delete_images(article_id: int, image_ids: list[str]) -> list[str]:
+def delete_images(article_id: int, image_ids: List[str]) -> List[str]:
 	"""
 	Удаляет указанные изображения для данной статьи.
 
@@ -62,19 +62,18 @@ def delete_images(article_id: int, image_ids: list[str]) -> list[str]:
 
 	:param article_id: Идентификатор статьи, из которой удаляются изображения.
 	:param image_ids: Список идентификаторов изображений для удаления.
-	:return: Список реально удалённых идентификаторов изображений.
+	:return: Список удалённых идентификаторов изображений.
 	"""
 	logger.info("Удаление %d изображений для статьи %s", len(image_ids), article_id)
 	client = connect_redis()
 	list_key = ARTICLE_IMAGES_LIST.format(article_id=article_id)
-	deleted: list[str] = []
+	deleted: List[str] = []
 
 	for image_id in image_ids:
 		key = IMAGE_KEY.format(article_id=article_id, image_id=image_id)
-		# Удаление изображения из Redis
-		result = client.delete(key)
-		if result:
-			# Удаление идентификатора изображения из списка статьи
+		# Попытка удаления ключа
+		if client.delete(key):
+			# Если ключ был, то удаляем UID из списка
 			client.lrem(list_key, 0, image_id)
 			deleted.append(image_id)
 
@@ -106,5 +105,3 @@ def get_image_bytes(article_id: int, image_id: str) -> bytes | None:
 	if data is None:
 		logger.error("Redis: изображение не найдено: %s", key)
 	return data
-
-
