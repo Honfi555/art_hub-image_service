@@ -18,4 +18,31 @@
 ## Установка и запуск
 1. Клонируйте репозиторий:
    ```bash
-   git clone `URL_репозитория`
+   cd /opt
+   git clne https://github.com/Honfi555/art_hub-image_service.git
+   cd ./art_hub-image_service
+   ```
+2. Установка зависимостей
+   ```bash
+   python -m venv .venv
+   source ./.venv/bin/activate
+   pip install -r ./requirements.txt
+   ```
+3. Настройка папки логов (в случае размещения репозитория в /opt)
+   ```bash
+   sudo mkdir -p /opt/art_hub-image_service/logs
+   sudo touch /opt/art_hub-image_service/logs/app.log
+   sudo chown -R www-data:www-data /opt/art_hub-image_service/logs
+   sudo chmod 755 /opt/art_hub-image_service/logs
+   sudo chmod 644 /opt/art_hub-image_service/logs/app.log
+   ```
+4. Установка daemon
+   ```bash
+   cp ./image-server.service /etc/systemd/system/image-server.service
+   systemctl daemon-reload
+   ```
+5. Запуск daemon
+   ```bash
+   systemctl start image-server.servise
+   systemctl enable image-server.servise
+   ```
